@@ -2,11 +2,13 @@ from typing import List
 from Code import Code
 from CodeScheme import CodeScheme
 from CodeDoesNotExist import CodeDoesNotExist
+from IInstrMap import IInstrumentMap
 
 
-class InstrumentMap:
+class InstrumentMap(IInstrumentMap):
 
     def __init__(self):
+        super().__init__()
         self.instr_map = {}
         for scheme in CodeScheme:
             self.instr_map[str(scheme)] = {}
