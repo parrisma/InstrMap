@@ -4,6 +4,7 @@ from InstrMap import InstrumentMap
 from Code import Code
 from CodeScheme import CodeScheme
 from CodeDoesNotExist import CodeDoesNotExist
+from OnlyBaseCodeDefined import OnlyBaseCodeDefined
 
 
 class TestInstrumentMap(unittest.TestCase):
@@ -116,3 +117,46 @@ class TestInstrumentMap(unittest.TestCase):
                 self.assertEqual(len(codes), len(test_alt_codes)+1)
                 for code in codes_to_check:
                     self.assertEqual(code in codes, True)
+
+    def test_get_instr_code_of_type_for_bad_code(self):
+        instrMap = InstrumentMap()
+        with self.assertRaises(ValueError):
+            instrMap.get_instr_code_of_type(None, CodeScheme.ISIN)
+        with self.assertRaises(ValueError):
+            instrMap.get_instr_code_of_type(
+                str("BadCodeTypeAsNotTypeCode"), CodeScheme.ISIN)
+        test_code = instrMap.create_instr()
+        test_code_not_added = Code(CodeScheme.BASE, Code.gen_base_code_value())
+        with self.assertRaises(CodeDoesNotExist):
+            instrMap.get_instr_code_of_type(
+                test_code_not_added, CodeScheme.RIC)
+        with self.assertRaises(OnlyBaseCodeDefined):
+            instrMap.get_instr_code_of_type(
+                test_code, CodeScheme.ISIN)
+        expected_code = instrMap.get_instr_code_of_type(
+            test_code, CodeScheme.BASE)
+        self.assertEqual(expected_code, test_code)
+
+    def test_get_instr_code_of_type(self):
+        instrMap = InstrumentMap()
+        all_tests = []
+        for _ in range(20):
+            test_code = instrMap.create_instr()
+            test_alt_codes = [Code(CodeScheme.ISIN, TestUtil.genISIN()),
+                              Code(CodeScheme.SEDOL, TestUtil.genSEDOL()),
+                              Code(CodeScheme.RIC, TestUtil.genRIC())]
+            instrMap.add_instr_codes(test_code, test_alt_codes)
+            all_tests.append([test_code] + test_alt_codes)
+
+        for codes_to_check in all_tests:
+            for code_to_test in codes_to_check:
+                codes = instrMap.get_instr_codes(code_to_test)
+                for code in codes:
+                    base_code = instrMap.get_instr_code_of_type(
+                        code, CodeScheme.BASE)
+                    self.assertEqual(isinstance(
+                        base_code, Code), True, f"All codes must have a Base code {code}")
+                    code_test = instrMap.get_instr_code_of_type(
+                        base_code, code.scheme())
+                    self.assertEqual(isinstance(code_test, Code), True)
+                    self.assertEqual(code, code_test)

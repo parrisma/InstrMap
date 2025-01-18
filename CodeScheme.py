@@ -13,3 +13,6 @@ class CodeScheme(Enum):
 
     def __str__(self) -> str:
         return self.description
+
+    def __repr__(self) -> str:
+        return self.__str__()
