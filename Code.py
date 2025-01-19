@@ -37,5 +37,16 @@ class Code:
     def gen_base_code_value() -> str:
         return str(GUID())
 
+    def __eq__(self, other) -> bool:
+        if isinstance(other, Code):
+            return self.code_scheme == other.code_scheme and self.code_value == other.code_value
+        return False
+
+    def __hash__(self) -> int:
+        return hash((self.code_scheme, self.code_value))
+
     def __str__(self) -> str:
-        return f"{self.code_scheme} : {self.code_value}"
+        return f"scheme: {self.code_scheme} : value: {self.code_value}"
+
+    def __repr__(self) -> str:
+        return self.__str__()

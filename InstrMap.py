@@ -1,8 +1,11 @@
 from typing import List
 from Code import Code
 from CodeScheme import CodeScheme
+from Agent import Agent
+from AgentRole import AgentRole
 from CodeDoesNotExist import CodeDoesNotExist
 from OnlyBaseCodeDefined import OnlyBaseCodeDefined
+from IncorrectPermissions import IncorrectPermissions
 from IInstrMap import IInstrumentMap
 
 
@@ -26,30 +29,48 @@ class InstrumentMap(IInstrumentMap):
             self.instr_map[str(scheme)] = {}
         return
 
-    def create_instr(self) -> Code:
+    def create_instr(self,
+                     agent: Agent) -> Code:
         """
-        Creates a new unquie code with a base id and adds it to the instrument map.
+        Creates an instrument record in the Instrument Map and allocates it a new globally unique identifier.
+
+        Args:
+            agent (Agent): The agent requesting the creation of the instrument.
+
+        Raises:
+            IncorrectPermissions: If the agent does not have the required permissions to create an instrument.
+            ValueError: If given arguments are null or of the wrong type.
 
         Returns:
-            Code: The newly created instrument code.
+            Code: The created instrument object.
         """
+        if agent is None or not isinstance(agent, Agent):
+            raise ValueError(
+                f"agent must be an instance of Agent and cannot be None: {agent}")
+
+        if not agent.has_required_permissions(AgentRole.MAINTAINER):
+            raise IncorrectPermissions(
+                f"Agent {agent} does not have the required permissions to create an instrument)")
+
         new_code = Code(CodeScheme.BASE, Code.gen_base_code_value())
         self.instr_map[str(new_code.code_scheme)][new_code] = new_code
         return new_code
 
     def add_instr_codes(self,
                         code: Code,
-                        codes: List[Code]) -> None:
+                        codes: List[Code],
+                        agent: Agent) -> None:
         """
         Adds a list of instrument codes to the instrument map for a given base code.
         Args:
             code (Code): The base code to which the instruction codes will be added.
             codes (List[Code]): A list of instrument codes to be added.
+            agent (Agent): The agent requesting the addition of the alternate codes.
         Raises:
-            ValueError: If `code` is None or not an instance of `Code`.
-            ValueError: If `codes` is not a list of `Code` instances.
+            ValueError: If any paramater is none or of the wrong type.
             ValueError: If an instrument code in `codes` already exists in the map with a different base code.
             CodeDoesNotExist: If the base `code` does not exist in the instrument map.
+            IncorrectPermissions: If the agent does not have the required permissions to create an instrument.
         """
         if code is None or not isinstance(code, Code):
             raise ValueError(
@@ -67,6 +88,14 @@ class InstrumentMap(IInstrumentMap):
                 raise ValueError(
                     f"codes must be a list of Code instances, but got {type(codes)}")
 
+        if agent is None or not isinstance(agent, Agent):
+            raise ValueError(
+                f"agent must be an instance of Agent and cannot be None: {agent}")
+
+        if not agent.has_required_permissions(AgentRole.MAINTAINER):
+            raise IncorrectPermissions(
+                f"Agent {agent} does not have the required permissions {AgentRole.MAINTAINER} to create an instrument)")
+
         base_code = self.instr_map[str(code.code_scheme)][code]
         for c in codes:
             if c not in self.instr_map[str(c.code_scheme)]:
@@ -78,16 +107,19 @@ class InstrumentMap(IInstrumentMap):
                         f"Cannot add code for a Code that already exists in the map with a different base code: {c}")
 
     def get_instr_codes(self,
-                        code: Code) -> List[Code]:
+                        code: Code,
+                        agent: Agent) -> List[Code]:
         """
         Retrieve all code schemes values that map to the given code
         Args:
             code (Code): The code for which to find all equivalent codes.
+            agent (Agent): The agent requesting the get of the alternate codes.
         Returns:
             List[Code]: A list of codes that map to the same base code as the given code.
         Raises:
-            ValueError: If the provided code is None or not an instance of Code.
+            ValueError: If the provided parameters are None or not an instance of required type.
             CodeDoesNotExist: If the provided code does not exist in the map.
+            IncorrectPermissions: If the agent does not have the required permissions to create an instrument.
         """
 
         if code is None or not isinstance(code, Code):
@@ -96,6 +128,14 @@ class InstrumentMap(IInstrumentMap):
 
         if code not in self.instr_map[str(code.code_scheme)]:
             raise CodeDoesNotExist(f"Code {code} does not exist in the map")
+
+        if agent is None or not isinstance(agent, Agent):
+            raise ValueError(
+                f"agent must be an instance of Agent and cannot be None: {agent}")
+
+        if not (agent.has_required_permissions(AgentRole.MAINTAINER) or agent.has_required_permissions(AgentRole.READER)):
+            raise IncorrectPermissions(
+                f"Agent {agent} does not have the required permissions {AgentRole.READER} to create an instrument)")
 
         base_code = self.instr_map[str(code.code_scheme)][code]
 
@@ -109,19 +149,21 @@ class InstrumentMap(IInstrumentMap):
 
     def get_instr_code_of_type(self,
                                code: Code,
-                               code_scheme: CodeScheme) -> Code:
+                               code_scheme: CodeScheme,
+                               agent: Agent) -> Code:
         """
         Retrieve the instruction code of a specific type from the instruction map.
         Args:
             code (Code): The code to search for. Must be an instance of Code and cannot be None.
             code_scheme (CodeScheme): The code scheme to match. Must be an instance of CodeScheme and cannot be None.
+            agent (Agent): The agent requesting the get of the alternate codes.
         Returns:
             Code: The matching instruction code of the specified type.
         Raises:
-            ValueError: If `code` is not an instance of Code or is None.
-            ValueError: If `code_scheme` is not an instance of CodeScheme or is None.
+            ValueError: If parameters are None or of the wrong type.
             CodeDoesNotExist: If the `code` does not exist in the instruction map.
             CodeDoesNotExist: If no matching code scheme is found for the given `code`.
+            IncorrectPermissions: If the agent does not have the required permissions to create an instrument.
         """
         if code is None or not isinstance(code, Code):
             raise ValueError(
@@ -134,7 +176,15 @@ class InstrumentMap(IInstrumentMap):
         if code not in self.instr_map[str(code.code_scheme)]:
             raise CodeDoesNotExist(f"Code {code} does not exist in the map")
 
-        codes = self.get_instr_codes(code)
+        if agent is None or not isinstance(agent, Agent):
+            raise ValueError(
+                f"agent must be an instance of Agent and cannot be None: {agent}")
+
+        if not (agent.has_required_permissions(AgentRole.MAINTAINER) or agent.has_required_permissions(AgentRole.READER)):
+            raise IncorrectPermissions(
+                f"Agent {agent} does not have the required permissions {AgentRole.READER} to create an instrument)")
+
+        codes = self.get_instr_codes(code, agent=agent)
 
         for c in codes:
             if c.code_scheme == code_scheme:

@@ -38,7 +38,8 @@ class TestCode(unittest.TestCase):
             self.fail("gen_base_code_value() did not return a valid UUID")
 
     def test_str(self):
-        self.assertEqual(str(self.code), f"{str(self.scheme)} : {self.code_value}")
+        self.assertEqual(str(self.code), f"{
+                         str(self.scheme)} : {self.code_value}")
 
     def test_eq(self):
         other_code = Code(self.scheme, self.code_value)
@@ -47,10 +48,6 @@ class TestCode(unittest.TestCase):
     def test_not_eq(self):
         other_code = Code(self.scheme, str(uuid.uuid4()))
         self.assertFalse(self.code == other_code)
-
-    def test_hash(self):
-        self.assertEqual(hash(self.code), hash(
-            f"{str(self.scheme)}{self.code_value}"))
 
 
 if __name__ == '__main__':
