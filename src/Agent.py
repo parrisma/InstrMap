@@ -3,7 +3,6 @@ from src.AgentRole import AgentRole
 from src.GloballyUniqueIdentifier import GloballyUniqueIdentifier
 import uuid
 from dataclasses import dataclass
-from abc import ABC, abstractmethod
 
 
 @dataclass(frozen=True)
@@ -53,6 +52,15 @@ class Agent(IAgent):
 
     def has_required_permissions(self,
                                  required_role: AgentRole) -> bool:
+        """
+        Check if the agent has the required permissions based on their role.
+        Args:
+            required_role (AgentRole): The role required to perform a certain action.
+        Returns:
+            bool: True if the agent's role matches the required role, False otherwise.
+        Raises:
+            ValueError: If the required_role is not an instance of AgentRole or is None.
+        """
         if not isinstance(required_role, AgentRole) or required_role is None:
             raise ValueError(
                 f"Invalid {required_role}: must be an instance of AgentRole")

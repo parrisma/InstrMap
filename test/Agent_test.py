@@ -59,3 +59,8 @@ class TestAgent(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.assertFalse(
                 self.agent_maint.has_required_permissions(str("NotAgentRole")))
+            
+    def test_hash(self):
+        dict = {}
+        dict[self.agent_maint] = self.agent_maint
+        self.assertTrue(self.agent_maint in dict)
