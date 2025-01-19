@@ -1,12 +1,13 @@
+from interface.ICode import ICode
 from src.CodeScheme import CodeScheme
 from src.GloballyUniqueIdentifier import GloballyUniqueIdentifier
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class Code:
+class Code(ICode):
     """
-    Represents a code where a code has both a value an a schemw, where scheme is the type of code.
+    Represents a code where a code has both a value and a scheme, where scheme is the type of code.
     Attributes:
         code_scheme (CodeScheme): The scheme associated with the code.
         code_value (str): The value of the code.
@@ -37,16 +38,5 @@ class Code:
     def gen_base_code_value() -> str:
         return str(GloballyUniqueIdentifier())
 
-    def __eq__(self, other) -> bool:
-        if isinstance(other, Code):
-            return self.scheme == other.scheme and self.value == other.value
-        return False
-
-    def __hash__(self) -> int:
-        return hash((self.scheme, self.value))
-
     def __str__(self) -> str:
         return f"scheme: {self.scheme} : value: {self.value}"
-
-    def __repr__(self) -> str:
-        return self.__str__()

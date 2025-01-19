@@ -1,7 +1,7 @@
 from typing import List
-from exception.Code import Code
+from interface.ICode import ICode
+from interface.IAgent import IAgent
 from src.CodeScheme import CodeScheme
-from src.Agent import Agent
 from abc import ABC, abstractmethod
 
 
@@ -9,7 +9,7 @@ class IInstrumentMap(ABC):
 
     @abstractmethod
     def create_instr(self,
-                     agent: Agent) -> Code:
+                     agent: IAgent) -> ICode:
         """
         Creates an instrument record in the Instrument Map and allocates it a new globally unique identifier.
 
@@ -27,9 +27,9 @@ class IInstrumentMap(ABC):
 
     @abstractmethod
     def add_instr_codes(self, code:
-                        Code,
-                        codes: List[Code],
-                        agent: Agent) -> None:
+                        ICode,
+                        codes: List[ICode],
+                        agent: IAgent) -> None:
         """
         Adds a the given list of alternate instrument codes to the given instrument. If a code is already associoated with
         instrument it is ignored.
@@ -48,8 +48,8 @@ class IInstrumentMap(ABC):
 
     @abstractmethod
     def get_instr_codes(self,
-                        code: Code,
-                        agent: Agent) -> List[Code]:
+                        code: ICode,
+                        agent: IAgent) -> List[ICode]:
         """
         Gets the given list of alternate instrument codes for the given instrument, this list includes the given instrument.
 
@@ -66,9 +66,9 @@ class IInstrumentMap(ABC):
 
     @abstractmethod
     def get_instr_code_of_type(self,
-                               code: Code,
+                               code: ICode,
                                code_scheme: CodeScheme,
-                               agent: Agent) -> List[Code]:
+                               agent: IAgent) -> List[ICode]:
         """
         Gets the given code scheme of the given instrument.
 

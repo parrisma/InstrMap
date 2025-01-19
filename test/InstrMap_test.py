@@ -1,7 +1,7 @@
 import unittest
 from TestUtil import TestUtil
 from src.InstrMap import InstrumentMap
-from exception.Code import Code
+from src.Code import Code
 from src.CodeScheme import CodeScheme
 from src.Agent import Agent
 from src.AgentRole import AgentRole

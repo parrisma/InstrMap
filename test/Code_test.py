@@ -1,6 +1,6 @@
 import unittest
 import uuid
-from exception.Code import Code
+from src.Code import Code
 from src.CodeScheme import CodeScheme
 
 
