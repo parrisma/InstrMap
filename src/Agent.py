@@ -1,11 +1,13 @@
-from AgentRole import AgentRole
-from guid import GUID
+from interface.IAgent import IAgent
+from src.AgentRole import AgentRole
+from src.GloballyUniqueIdentifier import GloballyUniqueIdentifier
 import uuid
 from dataclasses import dataclass
+from abc import ABC, abstractmethod
 
 
 @dataclass(frozen=True)
-class Agent:
+class Agent(IAgent):
     """
     Represents a given agent (user, service account) in the system
     Attributes:
@@ -58,7 +60,7 @@ class Agent:
 
     @staticmethod
     def gen_agent_id() -> str:
-        return str(GUID())
+        return str(GloballyUniqueIdentifier())
 
     def __str__(self) -> str:
         return f"Name: {self.agent_name} : Id: {self.agent_id} : Role: {self.agent_role}"

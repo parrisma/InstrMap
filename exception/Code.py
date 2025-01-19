@@ -1,5 +1,5 @@
-from CodeScheme import CodeScheme
-from guid import GUID
+from src.CodeScheme import CodeScheme
+from src.GloballyUniqueIdentifier import GloballyUniqueIdentifier
 from dataclasses import dataclass
 
 
@@ -16,37 +16,37 @@ class Code:
     Static Methods:
         gen_base_code_value() -> str: Generates a new globally unique base code.
     """
-    code_scheme: CodeScheme
-    code_value: str
+    scheme: CodeScheme
+    value: str
 
     def __post_init__(self):
-        if not isinstance(self.code_scheme, CodeScheme):
+        if not isinstance(self.scheme, CodeScheme):
             raise ValueError(
                 "Invalid code_scheme: must be an instance of CodeScheme")
-        if not isinstance(self.code_value, str) or not self.code_value:
+        if not isinstance(self.value, str) or not self.value:
             raise ValueError(
                 "Invalid code_value: must be a non-empty string")
 
     def scheme(self) -> CodeScheme:
-        return self.code_scheme
+        return self.scheme
 
     def value(self) -> str:
-        return self.code_value
+        return self.value
 
     @staticmethod
     def gen_base_code_value() -> str:
-        return str(GUID())
+        return str(GloballyUniqueIdentifier())
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Code):
-            return self.code_scheme == other.code_scheme and self.code_value == other.code_value
+            return self.scheme == other.scheme and self.value == other.value
         return False
 
     def __hash__(self) -> int:
-        return hash((self.code_scheme, self.code_value))
+        return hash((self.scheme, self.value))
 
     def __str__(self) -> str:
-        return f"scheme: {self.code_scheme} : value: {self.code_value}"
+        return f"scheme: {self.scheme} : value: {self.value}"
 
     def __repr__(self) -> str:
         return self.__str__()

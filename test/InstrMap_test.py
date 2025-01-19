@@ -1,13 +1,13 @@
 import unittest
 from TestUtil import TestUtil
-from InstrMap import InstrumentMap
-from Code import Code
-from CodeScheme import CodeScheme
-from Agent import Agent
-from AgentRole import AgentRole
-from CodeDoesNotExist import CodeDoesNotExist
-from OnlyBaseCodeDefined import OnlyBaseCodeDefined
-from IncorrectPermissions import IncorrectPermissions
+from src.InstrMap import InstrumentMap
+from exception.Code import Code
+from src.CodeScheme import CodeScheme
+from src.Agent import Agent
+from src.AgentRole import AgentRole
+from exception.CodeDoesNotExist import CodeDoesNotExist
+from exception.OnlyBaseCodeDefined import OnlyBaseCodeDefined
+from exception.IncorrectPermissions import IncorrectPermissions
 
 
 class TestInstrumentMap(unittest.TestCase):
@@ -36,7 +36,7 @@ class TestInstrumentMap(unittest.TestCase):
             _ = instrMap.create_instr(agent=str("BadAgentTypeAsNotTypeAgent"))
 
         new_code = instrMap.create_instr(agent=self.agent_maint)
-        if new_code is None or not isinstance(new_code, Code) or new_code.code_scheme != CodeScheme.BASE:
+        if new_code is None or not isinstance(new_code, Code) or new_code.scheme != CodeScheme.BASE:
             self.fail(
                 "code must be an instance of Code, a BASE code and cannot be None")
 
@@ -52,7 +52,7 @@ class TestInstrumentMap(unittest.TestCase):
             _ = instrMap.create_instr(agent=str("BadAgentTypeAsNotTypeAgent"))
 
         new_code = instrMap.create_instr(agent=self.agent_maint)
-        if new_code is None or not isinstance(new_code, Code) or new_code.code_scheme != CodeScheme.BASE:
+        if new_code is None or not isinstance(new_code, Code) or new_code.scheme != CodeScheme.BASE:
             self.fail(
                 "code must be an instance of Code, a BASE code and cannot be None")
 
@@ -229,6 +229,6 @@ class TestInstrumentMap(unittest.TestCase):
                     self.assertEqual(isinstance(
                         base_code, Code), True, f"All codes must have a Base code {code}")
                     code_test = instrMap.get_instr_code_of_type(
-                        code=base_code, code_scheme=code.scheme(), agent=self.agent_reader)
+                        code=base_code, code_scheme=code.scheme, agent=self.agent_reader)
                     self.assertEqual(isinstance(code_test, Code), True)
                     self.assertEqual(code, code_test)

@@ -1,6 +1,6 @@
 import unittest
-from Agent import Agent
-from AgentRole import AgentRole
+from src.Agent import Agent
+from src.AgentRole import AgentRole
 
 
 class TestAgent(unittest.TestCase):

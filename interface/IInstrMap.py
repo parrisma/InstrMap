@@ -1,7 +1,7 @@
 from typing import List
-from Code import Code
-from CodeScheme import CodeScheme
-from Agent import Agent
+from exception.Code import Code
+from src.CodeScheme import CodeScheme
+from src.Agent import Agent
 from abc import ABC, abstractmethod
 
 

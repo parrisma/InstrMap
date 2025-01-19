@@ -1,19 +1,19 @@
 import unittest
 import uuid
-from Code import Code
-from CodeScheme import CodeScheme
+from exception.Code import Code
+from src.CodeScheme import CodeScheme
 
 
 class TestCode(unittest.TestCase):
 
     def setUp(self):
-        self.scheme = CodeScheme.SEDOL
+        self.code_scheme = CodeScheme.SEDOL
         self.code_value = "12345"
-        self.code = Code(self.scheme, self.code_value)
+        self.code = Code(self.code_scheme, self.code_value)
 
     def test_init_valid(self):
-        self.assertEqual(self.code.code_scheme, self.scheme)
-        self.assertEqual(self.code.code_value, self.code_value)
+        self.assertEqual(self.code.scheme, self.code_scheme)
+        self.assertEqual(self.code.value, self.code_value)
 
     def test_init_invalid_scheme(self):
         with self.assertRaises(ValueError):
@@ -21,13 +21,13 @@ class TestCode(unittest.TestCase):
 
     def test_init_invalid_value(self):
         with self.assertRaises(ValueError):
-            Code(self.scheme, "")
+            Code(self.code_scheme, "")
 
     def test_scheme(self):
-        self.assertEqual(self.code.scheme(), self.scheme)
+        self.assertEqual(self.code.scheme, self.code_scheme)
 
     def test_value(self):
-        self.assertEqual(self.code.value(), self.code_value)
+        self.assertEqual(self.code.value, self.code_value)
 
     def test_gen_base_code_value(self):
         base_code_value = Code.gen_base_code_value()
@@ -38,15 +38,14 @@ class TestCode(unittest.TestCase):
             self.fail("gen_base_code_value() did not return a valid UUID")
 
     def test_str(self):
-        self.assertEqual(str(self.code), f"{
-                         str(self.scheme)} : {self.code_value}")
+        self.assertEqual(str(self.code), f"scheme: {self.code_scheme} : value: {self.code_value}")
 
     def test_eq(self):
-        other_code = Code(self.scheme, self.code_value)
+        other_code = Code(self.code_scheme, self.code_value)
         self.assertTrue(self.code == other_code)
 
     def test_not_eq(self):
-        other_code = Code(self.scheme, str(uuid.uuid4()))
+        other_code = Code(self.code_scheme, str(uuid.uuid4()))
         self.assertFalse(self.code == other_code)
 
 

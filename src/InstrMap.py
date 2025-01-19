@@ -1,12 +1,12 @@
 from typing import List
-from Code import Code
-from CodeScheme import CodeScheme
-from Agent import Agent
-from AgentRole import AgentRole
-from CodeDoesNotExist import CodeDoesNotExist
-from OnlyBaseCodeDefined import OnlyBaseCodeDefined
-from IncorrectPermissions import IncorrectPermissions
-from IInstrMap import IInstrumentMap
+from exception.Code import Code
+from src.CodeScheme import CodeScheme
+from src.Agent import Agent
+from src.AgentRole import AgentRole
+from exception.CodeDoesNotExist import CodeDoesNotExist
+from exception.OnlyBaseCodeDefined import OnlyBaseCodeDefined
+from exception.IncorrectPermissions import IncorrectPermissions
+from interface.IInstrMap import IInstrumentMap
 
 
 class InstrumentMap(IInstrumentMap):
@@ -53,7 +53,7 @@ class InstrumentMap(IInstrumentMap):
                 f"Agent {agent} does not have the required permissions to create an instrument)")
 
         new_code = Code(CodeScheme.BASE, Code.gen_base_code_value())
-        self.instr_map[str(new_code.code_scheme)][new_code] = new_code
+        self.instr_map[str(new_code.scheme)][new_code] = new_code
         return new_code
 
     def add_instr_codes(self,
@@ -76,7 +76,7 @@ class InstrumentMap(IInstrumentMap):
             raise ValueError(
                 f"code must be an instance of Code and cannot be None: {code}")
 
-        if code not in self.instr_map[str(code.code_scheme)]:
+        if code not in self.instr_map[str(code.scheme)]:
             raise CodeDoesNotExist(
                 f"Cannot add codes for a Code that does not exist in the map: {code}")
 
@@ -96,12 +96,12 @@ class InstrumentMap(IInstrumentMap):
             raise IncorrectPermissions(
                 f"Agent {agent} does not have the required permissions {AgentRole.MAINTAINER} to create an instrument)")
 
-        base_code = self.instr_map[str(code.code_scheme)][code]
+        base_code = self.instr_map[str(code.scheme)][code]
         for c in codes:
-            if c not in self.instr_map[str(c.code_scheme)]:
-                self.instr_map[str(c.code_scheme)][c] = base_code
+            if c not in self.instr_map[str(c.scheme)]:
+                self.instr_map[str(c.scheme)][c] = base_code
             else:
-                curr_base = self.instr_map[str(c.code_scheme)][c]
+                curr_base = self.instr_map[str(c.scheme)][c]
                 if curr_base != base_code:
                     raise ValueError(
                         f"Cannot add code for a Code that already exists in the map with a different base code: {c}")
@@ -126,7 +126,7 @@ class InstrumentMap(IInstrumentMap):
             raise ValueError(
                 f"code must be an instance of Code and cannot be None but got type {type(code)}")
 
-        if code not in self.instr_map[str(code.code_scheme)]:
+        if code not in self.instr_map[str(code.scheme)]:
             raise CodeDoesNotExist(f"Code {code} does not exist in the map")
 
         if agent is None or not isinstance(agent, Agent):
@@ -137,7 +137,7 @@ class InstrumentMap(IInstrumentMap):
             raise IncorrectPermissions(
                 f"Agent {agent} does not have the required permissions {AgentRole.READER} to create an instrument)")
 
-        base_code = self.instr_map[str(code.code_scheme)][code]
+        base_code = self.instr_map[str(code.scheme)][code]
 
         all_codes = []
         for scheme in CodeScheme:
@@ -173,7 +173,7 @@ class InstrumentMap(IInstrumentMap):
             raise ValueError(
                 "code sheme must be an instance of CodeScheme and cannot be None")
 
-        if code not in self.instr_map[str(code.code_scheme)]:
+        if code not in self.instr_map[str(code.scheme)]:
             raise CodeDoesNotExist(f"Code {code} does not exist in the map")
 
         if agent is None or not isinstance(agent, Agent):
@@ -187,7 +187,7 @@ class InstrumentMap(IInstrumentMap):
         codes = self.get_instr_codes(code, agent=agent)
 
         for c in codes:
-            if c.code_scheme == code_scheme:
+            if c.scheme == code_scheme:
                 return c
 
         raise OnlyBaseCodeDefined(

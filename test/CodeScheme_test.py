@@ -1,5 +1,5 @@
 import unittest
-from CodeScheme import CodeScheme
+from src.CodeScheme import CodeScheme
 
 class TestCodeScheme(unittest.TestCase):
 

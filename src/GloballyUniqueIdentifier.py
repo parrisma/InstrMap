@@ -1,14 +1,14 @@
 import uuid
 
 
-class GUID:
+class GloballyUniqueIdentifier:
     def __init__(self):
         self.value = uuid.uuid4()
 
     def __str__(self): return str(self.value)
 
     def __eq__(self, other):
-        if isinstance(other, GUID):
+        if isinstance(other, GloballyUniqueIdentifier):
             return self.value == other.value
         return False
 
